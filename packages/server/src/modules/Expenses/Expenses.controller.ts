@@ -31,6 +31,7 @@ import { PermissionGuard } from '@/modules/Roles/Permission.guard';
 import { AuthorizationGuard } from '@/modules/Roles/Authorization.guard';
 import { AbilitySubject } from '@/modules/Roles/Roles.types';
 import { ExpenseAction } from './Expenses.types';
+import { GetBillableExpensesService } from './queries/GetBillableExpenses.service';
 
 @Controller('expenses')
 @ApiTags('Expenses')
@@ -42,7 +43,32 @@ import { ExpenseAction } from './Expenses.types';
 @ApiCommonHeaders()
 @UseGuards(AuthorizationGuard, PermissionGuard)
 export class ExpensesController {
-  constructor(private readonly expensesApplication: ExpensesApplication) { }
+  constructor(
+    private readonly expensesApplication: ExpensesApplication,
+    private readonly getBillableExpensesService: GetBillableExpensesService,
+  ) { }
+
+  /**
+   * Get billable (un-invoiced) expenses, optionally filtered by customer.
+   * @param {number} customerId - Optional customer ID to filter by.
+   * @returns {Promise<Expense[]>}
+   */
+  @Get('billable')
+  @RequirePermission(ExpenseAction.View, AbilitySubject.Expense)
+  @ApiOperation({
+    summary: 'Get billable (un-invoiced) expenses, optionally filtered by customer.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of billable expenses retrieved successfully.',
+  })
+  public getBillableExpenses(
+    @Query('customerId') customerId?: number,
+  ) {
+    return this.getBillableExpensesService.getBillableExpenses({
+      customerId: customerId ? Number(customerId) : undefined,
+    });
+  }
 
   @Post('validate-bulk-delete')
   @RequirePermission(ExpenseAction.Delete, AbilitySubject.Expense)
@@ -173,3 +199,4 @@ export class ExpensesController {
     return this.expensesApplication.getExpense(expenseId);
   }
 }
+

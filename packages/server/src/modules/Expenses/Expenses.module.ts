@@ -21,6 +21,9 @@ import { ExpensesExportable } from './ExpensesExportable';
 import { ExpensesImportable } from './ExpensesImportable';
 import { BulkDeleteExpensesService } from './BulkDeleteExpenses.service';
 import { ValidateBulkDeleteExpensesService } from './ValidateBulkDeleteExpenses.service';
+import { GetBillableExpensesService } from './queries/GetBillableExpenses.service';
+import { SyncExpenseInvoicedAmountService } from './subscribers/SyncExpenseInvoicedAmount.service';
+import { SaleInvoiceExpenseSyncSubscriber } from './subscribers/SaleInvoiceExpenseSync.subscriber';
 
 @Module({
   imports: [LedgerModule, BranchesModule, DynamicListModule],
@@ -45,6 +48,10 @@ import { ValidateBulkDeleteExpensesService } from './ValidateBulkDeleteExpenses.
     ExpensesImportable,
     BulkDeleteExpensesService,
     ValidateBulkDeleteExpensesService,
+    GetBillableExpensesService,
+    SyncExpenseInvoicedAmountService,
+    SaleInvoiceExpenseSyncSubscriber,
   ],
 })
-export class ExpensesModule {}
+export class ExpensesModule { }
+

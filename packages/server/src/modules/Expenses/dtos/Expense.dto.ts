@@ -152,6 +152,24 @@ export class CommandExpenseDto {
   })
   branchId?: number;
 
+  @IsBoolean()
+  @Transform(({ value }) => parseBoolean(value, false))
+  @IsOptional()
+  @ApiProperty({
+    description: 'Whether the expense is billable to a customer',
+    example: true,
+  })
+  billable?: boolean;
+
+  @ToNumber()
+  @IsInt()
+  @IsOptional()
+  @ApiProperty({
+    description: 'The customer id to bill this expense to',
+    example: 1,
+  })
+  customerId?: number;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ExpenseCategoryDto)

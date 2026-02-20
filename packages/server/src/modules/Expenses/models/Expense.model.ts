@@ -30,6 +30,8 @@ export class Expense extends TenantBaseModel {
   allocatedCostAmount!: number;
   invoicedAmount: number;
   branchId!: number;
+  billable!: boolean;
+  customerId!: number;
   createdAt!: Date;
 
   categories!: ExpenseCategory[];
@@ -192,7 +194,24 @@ export class Expense extends TenantBaseModel {
        * Filters the expenses have billable amount.
        */
       billable(query) {
-        query.where(raw('AMOUNT > INVOICED_AMOUNT'));
+        query.where('billable', true);
+        query.where(raw('TOTAL_AMOUNT > COALESCE(INVOICED_AMOUNT, 0)'));
+      },
+
+      /**
+       * Filters the expenses by billable flag.
+       */
+      filterByBillable(query) {
+        query.where('billable', true);
+      },
+
+      /**
+       * Filters the expenses by customer id.
+       */
+      filterByCustomerId(query, customerId) {
+        if (customerId) {
+          query.where('customer_id', customerId);
+        }
       },
     };
   }
@@ -208,8 +227,24 @@ export class Expense extends TenantBaseModel {
     const {
       MatchedBankTransaction,
     } = require('../../BankingMatching/models/MatchedBankTransaction');
+    const { Customer } = require('../../Customers/models/Customer');
 
     return {
+      /**
+       * Expense may belong to a customer (billable expense).
+       */
+      customer: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Customer,
+        join: {
+          from: 'expenses_transactions.customerId',
+          to: 'contacts.id',
+        },
+        filter(query) {
+          query.where('contact_service', 'Customer');
+        },
+      },
+
       /**
        * Expense transaction may belongs to a payment account.
        */

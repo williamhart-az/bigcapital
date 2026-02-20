@@ -190,7 +190,7 @@ export class ItemEntry extends BaseModel {
     const { SaleReceipt } = require('../../SaleReceipts/models/SaleReceipt');
     const { SaleEstimate } = require('../../SaleEstimates/models/SaleEstimate');
     const { TaxRateModel } = require('../../TaxRates/models/TaxRate.model');
-    // const { Expense } = require('../../Expenses/models/Expense.model');
+    const { Expense } = require('../../Expenses/models/Expense.model');
     // const ProjectTask = require('models/Task');
 
     return {
@@ -265,14 +265,14 @@ export class ItemEntry extends BaseModel {
       /**
        * Project expense reference.
        */
-      // projectExpenseRef: {
-      //   relation: Model.HasManyRelation,
-      //   modelClass: Expense.default,
-      //   join: {
-      //     from: 'items_entries.projectRefId',
-      //     to: 'expenses_transactions.id',
-      //   },
-      // },
+      projectExpenseRef: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Expense,
+        join: {
+          from: 'items_entries.projectRefId',
+          to: 'expenses_transactions.id',
+        },
+      },
 
       /**
        * Project bill reference.

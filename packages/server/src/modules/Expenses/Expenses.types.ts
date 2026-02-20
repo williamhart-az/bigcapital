@@ -77,3 +77,7 @@ export enum ExpenseAction {
   Delete = 'Delete',
   View = 'View',
 }
+
+export interface IBillableExpensesFilter {
+  customerId?: number;
+}
