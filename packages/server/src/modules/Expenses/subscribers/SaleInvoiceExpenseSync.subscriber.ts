@@ -6,6 +6,7 @@ import {
     ISaleInvoiceDeletePayload,
 } from '@/modules/SaleInvoices/SaleInvoice.types';
 import { SyncExpenseInvoicedAmountService } from './SyncExpenseInvoicedAmount.service';
+import { ProjectLinkRefType } from '@/modules/TransactionItemEntry/ItemEntry.types';
 
 @Injectable()
 export class SaleInvoiceExpenseSyncSubscriber {
@@ -24,8 +25,7 @@ export class SaleInvoiceExpenseSyncSubscriber {
     }: ISaleInvoiceCreatedPayload) {
         const expenseEntries = (saleInvoice.entries || []).filter(
             (entry) =>
-                entry.referenceType === 'Expense' ||
-                (entry as any).projectRefType === 'Expense',
+                (entry as any).projectRefType === ProjectLinkRefType.Expense,
         );
 
         for (const entry of expenseEntries) {
@@ -52,8 +52,7 @@ export class SaleInvoiceExpenseSyncSubscriber {
     }: ISaleInvoiceDeletePayload) {
         const expenseEntries = (oldSaleInvoice.entries || []).filter(
             (entry) =>
-                entry.referenceType === 'Expense' ||
-                (entry as any).projectRefType === 'Expense',
+                (entry as any).projectRefType === ProjectLinkRefType.Expense,
         );
 
         for (const entry of expenseEntries) {
